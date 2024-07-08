@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Coinbase Wallet Integration</title>
+    <script src="https://cdn.jsdelivr.net/npm/@coinbase/wallet-sdk"></script>
+    <style>
+        #logs {
+            white-space: pre-wrap;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <button id="connectButton">Connect Wallet</button>
+    <div id="status"></div>
+    <div id="logs"></div>
+
+    <script>
+        const sdk = new window.CoinbaseWalletSDK({
+            appName: 'My App Name',
+            appChainId: [8453]
+        });
+
+        const provider = sdk.makeWeb3Provider({ options: 'smartWalletOnly' });
+
+        function logMessage(message) {
+            const logs = document.getElementById('logs');
+            logs.innerText += message + '\n';
+            logs.scrollTop = logs.scrollHeight; // Scroll to bottom
+        }
+
+        document.getElementById('connectButton').addEventListener('click', async () => {
+            try {
+                logMessage('Button clicked');
+                logMessage('Initializing connection to wallet...');
+                const addresses = await provider.request({ method: 'eth_requestAccounts' });
+                logMessage('Received response from provider');
+                document.getElementById('status').innerText = `Connected: ${addresses[0]}`;
+                logMessage(`Connected: ${addresses[0]}`);
+            } catch (error) {
+                logMessage('Error occurred');
+                document.getElementById('status').innerText = `Error: ${error.message}`;
+                logMessage(`Error: ${error.message}`);
+            }
+        });
+
+        // Ensure script is loaded
+        logMessage('Script loaded');
+    </script>
+</body>
+</html>
